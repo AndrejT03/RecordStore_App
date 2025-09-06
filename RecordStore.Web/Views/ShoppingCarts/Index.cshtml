@@ -1,0 +1,239 @@
+﻿@model RecordStore.Domain.DTO.ShoppingCartDTO
+@using Microsoft.Extensions.Options
+@using RecordStore.Domain.DTO
+@inject IOptions<StripeSettings> Stripe
+
+@{
+    ViewData["Title"] = "My Shopping Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    body {
+        background-color: #f8f9fa; 
+    }
+
+    .interactive-btn {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .interactive-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.4rem 0.8rem rgba(0,0,0,.15);
+    }
+
+    button.gradient-button {
+        background: radial-gradient(circle, #4A89DC, #8fb3e2) !important;
+        color: white;
+        font-weight: bold;
+        border: none;
+        display: inline-block;
+        padding: 10px 25px;
+        text-align: center;
+        vertical-align: middle;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    button.gradient-button:hover {
+        background: radial-gradient(circle, #8fb3e2, #4A89DC) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .loyalty-card-small {
+        background-color: #eef7ff; 
+        border-left: 4px solid #1e88e5; 
+        padding: 0.8rem 1.2rem; 
+    }
+
+    .loyalty-card-small h6 {
+        font-size: 1rem; 
+        margin-bottom: 0.25rem;
+    }
+
+    .loyalty-card-small p {
+        font-size: 0.85rem;
+        margin-bottom: 0;
+    }
+
+    .order-summary-card {
+        background-color: #ffffff;
+        border-radius: 12px;
+        border: none;
+    }
+
+    .cart-item-card {
+        border-radius: 12px;
+        border: none;
+    }
+
+    .quantity-control .btn {
+        color: #555;
+    }
+
+    .quantity-control .btn:hover {
+        color: #000;
+    }
+</style>
+
+<div class="container my-5">
+    @if (Model.Items.Any())
+    {
+        <h1 class="mb-4">Your Shopping Cart</h1>
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-sm mb-4 cart-item-card">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0">Your Items (@Model.Items.Count)</h5>
+                    </div>
+                    <div class="card-body">
+                        @foreach (var item in Model.Items)
+                        {
+                            <div class="row mb-4 align-items-center">
+                                <div class="col-md-2">
+                                    <img src="@(item.CoverURL ?? "https://via.placeholder.com/80")"
+                                         class="img-fluid rounded-3"
+                                         style="width: 80px; height: 80px; object-fit: cover;"
+                                         alt="@item.Title">
+                                </div>
+                                <div class="col-md-4">
+                                    <h6 class="mb-0">@item.Title</h6>
+                                </div>
+                                <div class="col-md-3 d-flex align-items-center justify-content-start quantity-control">
+                                    <a asp-controller="ShoppingCarts" asp-action="ReduceQuantity" asp-route-id="@item.RecordId" class="btn btn-link px-2 interactive-btn">
+                                        <i class="fas fa-minus"></i>
+                                    </a>
+                                    <span class="mx-3 lead fw-normal">@item.Quantity</span>
+                                    <a asp-controller="ShoppingCarts" asp-action="IncreaseQuantity" asp-route-id="@item.RecordId" class="btn btn-link px-2 interactive-btn">
+                                        <i class="fas fa-plus"></i>
+                                    </a>
+                                </div>
+                                <div class="col-md-2">
+                                    <h6 class="mb-0">@String.Format("{0:C}", item.Price)</h6>
+                                </div>
+                                <div class="col-md-1 text-end">
+                                    <a asp-controller="ShoppingCarts" asp-action="Delete" asp-route-id="@item.RecordId" class="text-danger interactive-btn">
+                                        <i class="fas fa-trash fa-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            @if (item != Model.Items.Last())
+                            {
+                                <hr class="my-3" />
+                            }
+                        }
+                    </div>
+                </div>
+
+                @if (Model.UserLoyaltyPoints > 0)
+                {
+                    <div class="card mb-4 loyalty-card-small">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1"><i class="fas fa-star text-warning me-2"></i>Loyalty Balance</h6>
+                                <p>You have <strong>@String.Format("{0:C}", Model.UserLoyaltyPoints)</strong> available.</p>
+                            </div>
+                            <form asp-controller="ShoppingCarts" asp-action="ApplyLoyaltyPoints" method="post" class="ms-3">
+                                @if (Model.PointsApplied)
+                                {
+                                    <input type="hidden" name="apply" value="false" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger interactive-btn">Remove</button>
+                                }
+                                else
+                                {
+                                    <input type="hidden" name="apply" value="true" />
+                                    <button type="submit" class="btn btn-sm btn-outline-success interactive-btn">Apply</button>
+                                }
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm order-summary-card">
+                    <div class="card-body p-4">
+                        <h5 class="card-title mb-4">Order Summary</h5>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <p class="text-muted">Subtotal</p>
+                            <p>@String.Format("{0:C}", Model.TotalPrice)</p>
+                        </div>
+
+                        @if (Model.PointsApplied)
+                        {
+                            <div class="d-flex justify-content-between text-success">
+                                <p class="text-muted">Loyalty Discount</p>
+                                <p>- @String.Format("{0:C}", Model.AppliedDiscount)</p>
+                            </div>
+                        }
+
+                        <hr class="my-3" />
+
+                        <div class="d-flex justify-content-between mb-4 fw-bold h5">
+                            <p class="text-uppercase">Total</p>
+                            <p>@String.Format("{0:C}", Model.FinalPrice)</p>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="button" id="checkout-button" class="gradient-button interactive-btn">Pay with Card</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a href="@Url.Action("Index", "Records")" class="btn btn-outline-primary interactive-btn">&lt; Continue shopping</a>
+        </div>
+    }
+    else
+    {
+        <div class="text-center p-5 bg-white rounded-3 shadow-sm">
+            <i class="fas fa-shopping-cart fa-5x text-muted mb-4"></i>
+            <h2 class="mt-4">Your shopping cart is empty.</h2>
+            <p class="lead text-muted">Looks like you haven't added anything to your cart yet.</p>
+            <a href="@Url.Action("Index", "Records")" class="btn btn-primary btn-lg mt-4 interactive-btn">Start Shopping</a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://js.stripe.com/v3/"></script>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            var stripe = Stripe('@Stripe.Value.PublishableKey');
+            var checkoutButton = document.getElementById('checkout-button');
+
+            if (checkoutButton) {
+                checkoutButton.addEventListener('click', function () {
+                    fetch('/ShoppingCarts/CreateCheckoutSession', {
+                        method: 'POST',
+                    })
+                    .then(function (response) {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json();
+                    })
+                    .then(function (session) {
+                        return stripe.redirectToCheckout({ sessionId: session.id });
+                    })
+                    .then(function (result) {
+                        if (result.error) alert(result.error.message);
+                    })
+                    .catch(function (error) {
+                        console.error('Error:', error);
+                        alert('An error occurred while setting up payment. Please try again.');
+                    });
+                });
+            }
+        });
+    </script>
+}

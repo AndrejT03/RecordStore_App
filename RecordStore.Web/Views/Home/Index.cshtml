@@ -1,0 +1,101 @@
+﻿@model RecordStore.Domain.DTO.HomeViewModel
+
+@{
+    ViewData["Title"] = "Welcome";
+}
+
+<h1 style="margin-top: 20px; text-align:center">Welcome to Record Store!</h1>
+
+<div class="container my-4">
+
+    <div class="row text-center mb-2" style="background-image: radial-gradient(lightgray, lightslategray); color: white; padding: 0.5rem;">
+        <h2>Featured Records</h2>
+    </div>
+
+    @if (Model.Records != null && Model.Records.Any())
+    {
+        <div id="recordsCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                @for (int i = 0; i < Model.Records.Count; i++)
+                {
+                    <button type="button" data-bs-target="#recordsCarousel" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"></button>
+                }
+            </div>
+
+            <div class="carousel-inner">
+                @for (int i = 0; i < Model.Records.Count; i++)
+                {
+                    var record = Model.Records[i];
+                    <div class="carousel-item @(i == 0 ? "active" : "") text-center" style="background-image: linear-gradient(to top, #6c757d, #f8f9fa); padding: 2rem;">
+                        <a asp-controller="Records" asp-action="Details" asp-route-id="@record.Id">
+                            <img src="@record.CoverURL" class="d-block mx-auto img-thumbnail" alt="Cover for @record.Title" style="height: 300px; width: 300px; border-width: 2px;" />
+                        </a>
+                        <div class="carousel-caption d-none d-md-block text-dark">
+                            <h5>@record.Title</h5>
+                            <p>@record.Artist?.Name</p>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <button class="carousel-control-prev" type="button" data-bs-target="#recordsCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#recordsCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    }
+    else
+    {
+        <h4 class="text-center">No Records available yet!</h4>
+    }
+
+    <br />
+
+    <div class="row text-center mb-2" style="background-image: radial-gradient(lightgray, lightslategray); color: white; padding: 0.5rem;">
+        <h2>Featured Artists</h2>
+    </div>
+
+    @if (Model.Artists != null && Model.Artists.Any())
+    {
+        <div id="artistsCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                @for (int i = 0; i < Model.Artists.Count; i++)
+                {
+                    <button type="button" data-bs-target="#artistsCarousel" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"></button>
+                }
+            </div>
+
+            <div class="carousel-inner">
+                @for (int i = 0; i < Model.Artists.Count; i++)
+                {
+                    var artist = Model.Artists[i];
+                    <div class="carousel-item @(i == 0 ? "active" : "") text-center" style="background-image: linear-gradient(to top, #6c757d, #f8f9fa); padding: 2rem;">
+                        <a asp-controller="Artists" asp-action="Details" asp-route-id="@artist.Id">
+                            <img src="@artist.Picture" class="d-block mx-auto img-thumbnail" alt="Photo of @artist.Name" style="height: 300px; width: 300px; border-width: 2px;" />
+                        </a>
+                        <div class="carousel-caption d-none d-md-block text-dark">
+                            <h5>@artist.Name</h5>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <button class="carousel-control-prev" type="button" data-bs-target="#artistsCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#artistsCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    }
+    else
+    {
+        <h4 class="text-center">No Artists available yet!</h4>
+    }
+</div>

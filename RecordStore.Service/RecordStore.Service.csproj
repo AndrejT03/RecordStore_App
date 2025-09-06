@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.13.0" />
+    <PackageReference Include="MimeKit" Version="4.13.0" />
+    <PackageReference Include="X.PagedList" Version="10.5.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RecordStore.Domain\RecordStore.Domain.csproj" />
+    <ProjectReference Include="..\RecordStore.Repository\RecordStore.Repository.csproj" />
+  </ItemGroup>
+
+</Project>

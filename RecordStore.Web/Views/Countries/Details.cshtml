@@ -1,0 +1,62 @@
+﻿@model RecordStore.Domain.DomainModels.Country
+
+@{
+    ViewData["Title"] = "Country Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .interactive-btn {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .interactive-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.4rem 0.8rem rgba(0,0,0,.15);
+    }
+</style>
+
+<div class="container my-5">
+    <div class="row align-items-center">
+        <div class="col-lg-3 text-center mb-4 mb-lg-0">
+            <img src="@Model.Flag" alt="Flag of @Model.Name" class="img-fluid rounded-circle shadow-sm" style="width: 200px; height: 200px; object-fit: cover;" />
+        </div>
+
+        <div class="col-lg-9">
+            <h1>@Model.Name</h1>
+            <p class="lead text-muted">@Model.Region</p>
+
+            @if (User.IsInRole("Administrator"))
+            {
+                <div class="mt-3">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-warning interactive-btn">Edit</a>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <ul class="nav nav-tabs" id="countryTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="true">Details</button>
+                </li>
+            </ul>
+            <div class="tab-content card p-4" id="countryTabContent">
+                <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
+                    <h5>Country Information</h5>
+                    <ul class="list-unstyled">
+                        <li><strong>Capital:</strong> @Model.Capital</li>
+                        <li><strong>Region:</strong> @Model.Region</li>
+                        <li><strong>Country Code(1):</strong> @Model.Code1</li>
+                        <li><strong>Country Code(2):</strong> @Model.Code2</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-info interactive-btn">&lt; Back to Countries</a>
+    </div>
+</div>

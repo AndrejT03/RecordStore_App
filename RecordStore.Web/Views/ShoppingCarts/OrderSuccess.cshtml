@@ -1,0 +1,70 @@
+﻿@using System.Text.Json
+@model string
+@{
+    ViewData["Title"] = "Order Successful";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container text-center" style="margin-top: 50px;">
+    <div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Eo_circle_light-blue_checkmark.svg/2048px-Eo_circle_light-blue_checkmark.svg.png" style="width: 70px; height:70px;"/>
+    </div>
+    <div class="alert alert-success" style="margin-top: 15px;"  role="alert">
+        <h4 class="alert-heading">Order Placed Successfully!</h4>
+        <p>Your order has been successfully placed and a confirmation email has been sent to your registered email address.</p>
+        <hr>
+        <p class="mb-0">You will be redirected to your shopping cart in <span id="countdown">10</span> seconds.</p>
+    </div>
+    <p>
+        See the confirmation email <a href="#" id="showEmailLink" class="btn btn-link align-baseline px-0">here</a>.
+    </p>
+
+    <p class="mt-4">If you are not redirected, click <a href="@Url.Action("Index", "ShoppingCarts")">here</a>.</p>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            var countdownElement = document.getElementById('countdown');
+            var seconds = 10;
+
+            function updateCountdown() {
+                countdownElement.textContent = seconds;
+                seconds--;
+                if (seconds < 0) {
+                    window.location.href = '@Url.Action("Index", "ShoppingCarts")';
+                } else {
+                    setTimeout(updateCountdown, 1000);
+                }
+            }
+
+            updateCountdown();
+
+            document.getElementById("showEmailLink").addEventListener("click", function (event) {
+                event.preventDefault();
+
+                var emailContent = @Html.Raw(JsonSerializer.Serialize(Model ?? ""));
+
+                var newWindow = window.open("", "_blank");
+
+                newWindow.document.write(
+                    "<html>" +
+                    "<head>" +
+                    "<title>Order Confirmation Email</title>" +
+                    "<style>" +
+                        "body { font-family: Arial, sans-serif; padding: 20px; }" +
+                        "table { border-collapse: collapse; width: 100%; }" +
+                        "th, td { border: 1px solid #ddd; padding: 8px; }" +
+                        "th { background-color: #f2f2f2; }" +
+                    "</style>" +
+                    "</head>" +
+                    "<body>" +
+                        emailContent +
+                    "</bo" + "dy>" +
+                    "</ht" + "ml>"
+                );
+                newWindow.document.close();
+            });
+        });
+    </script>
+}

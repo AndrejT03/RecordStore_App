@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "Order Cancelled";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container text-center" style="margin-top: 50px;">
+    <div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Cross_red_circle.svg/2048px-Cross_red_circle.svg.png" style="width: 70px; height:70px;" />
+    </div>
+    <div class="alert alert-danger" style="margin-top: 15px;" role="alert">
+        <h4 class="alert-heading">Order Cancelled</h4>
+        <p>Your payment process was cancelled. Your shopping cart has not been changed.</p>
+        <hr>
+        <p class="mb-0">You will be redirected to your shopping cart in <span id="countdown">5</span> seconds.</p>
+    </div>
+
+    <p class="mt-4">If you are not redirected, click <a href="@Url.Action("Index", "ShoppingCarts")">here</a>.</p>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            var countdownElement = document.getElementById('countdown');
+            var seconds = 5;
+
+            function updateCountdown() {
+                countdownElement.textContent = seconds;
+                seconds--;
+                if (seconds < 0) {
+                    window.location.href = '@Url.Action("Index", "ShoppingCarts")';
+                } else {
+                    setTimeout(updateCountdown, 1000);
+                }
+            }
+
+            updateCountdown();
+        });
+    </script>
+}

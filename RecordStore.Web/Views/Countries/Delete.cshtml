@@ -1,0 +1,42 @@
+﻿@model RecordStore.Domain.DomainModels.Country
+
+@{
+    ViewData["Title"] = "Delete Country";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .interactive-btn {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .interactive-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.4rem 0.8rem rgba(0,0,0,.15);
+    }
+</style>
+
+<div class="container text-center my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="alert alert-danger" role="alert">
+                <h2 class="alert-heading">Confirm Deletion</h2>
+                <p>Are you sure you want to permanently delete this country?</p>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <img src="@Model.Flag" alt="Flag of @Model.Name" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;" />
+                    <h3 class="card-title">@Model.Name</h3>
+                    <p class="card-text text-muted">@Model.Region</p>
+                </div>
+            </div>
+
+            <form asp-action="Delete" method="post" class="mt-4">
+                <input type="hidden" asp-for="Id" />
+                <a asp-action="Index" class="btn btn-secondary btn-lg interactive-btn">No, go back</a>
+                <input type="submit" value="Yes, Delete" class="btn btn-danger btn-lg ms-2 interactive-btn" />
+            </form>
+        </div>
+    </div>
+</div>

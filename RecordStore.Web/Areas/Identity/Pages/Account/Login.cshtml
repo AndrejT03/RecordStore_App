@@ -1,0 +1,105 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<style>
+    .divider:before,
+    .divider:after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #eee;
+    }
+    .interactive-btn {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .interactive-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.4rem 0.8rem rgba(0,0,0,.15);
+    }
+</style>
+
+<div class="container mt-4 mb-5">
+    <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-lg-12 col-xl-11">
+            <div class="card shadow-sm" style="border-radius: 1rem;">
+                <div class="card-body p-md-5">
+                    <div class="row justify-content-center">
+
+                        <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+
+                            <h2 class="text-center fw-bold mb-4">Log in</h2>
+
+                            @{
+                                if ((Model.ExternalLogins?.Count ?? 0) > 0)
+                                {
+                                    <section>
+                                        <p class="text-center">Login with your profile:</p>
+                                        <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="text-center mb-3">
+                                            @foreach (var provider in Model.ExternalLogins!)
+                                            {
+                                                <button type="submit" class="btn btn-outline-primary mx-1 interactive-btn" name="provider" value="@provider.Name" title="Login with your @provider.DisplayName profile">@provider.DisplayName</button>
+                                            }
+                                        </form>
+                                        <div class="divider d-flex align-items-center my-4">
+                                            <p class="text-center fw-bold mx-3 mb-0">OR</p>
+                                        </div>
+                                    </section>
+                                }
+                            }
+
+                            <form id="account" method="post">
+                                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                                <div class="mb-4">
+                                    <label asp-for="Input.Email" class="form-label">Еmail</label>
+                                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
+                                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label asp-for="Input.Password" class="form-label">Password</label>
+                                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
+                                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" asp-for="Input.RememberMe" />
+                                        <label class="form-check-label" asp-for="Input.RememberMe">
+                                            @Html.DisplayNameFor(m => m.Input.RememberMe)
+                                        </label>
+                                    </div>
+                                    <a id="forgot-password" asp-page="./ForgotPassword" class="interactive-btn">Did you forget your password?</a>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button id="login-submit" type="submit" class="btn btn-primary btn-lg interactive-btn">Login</button>
+                                </div>
+
+                                <p class="text-center mt-4">
+                                    Don't have a profile? <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="interactive-btn">Register</a>
+                                </p>
+                            </form>
+                        </div>
+
+                        <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
+                                 class="img-fluid" alt="Login Image">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

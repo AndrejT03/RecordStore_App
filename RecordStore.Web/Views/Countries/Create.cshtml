@@ -1,0 +1,128 @@
+﻿@model RecordStore.Domain.DomainModels.Country
+
+@{
+    ViewData["Title"] = "Create New Country";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .interactive-btn {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .interactive-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.4rem 0.8rem rgba(0,0,0,.15);
+    }
+
+    .form-table {
+        width: 100%;
+        max-width: 600px;
+        border-collapse: separate;
+        border-spacing: 0 12px;
+    }
+
+    .form-table td {
+        vertical-align: middle;
+    }
+
+    .form-table .label-cell {
+        text-align: right;
+        padding-right: 15px;
+        width: 150px;
+        font-weight: bold;
+        color: #555;
+    }
+
+    .form-table .input-cell input {
+        width: 100%;
+        max-width: 350px;
+        border: 1px solid #ccc;
+        padding: 6px;
+        font-size: 14px;
+        border-radius: 3px;
+    }
+
+    .form-table .btn {
+        margin-top: 10px;
+    }
+
+    .text-danger {
+        font-size: 0.9em;
+        margin-left: 2px;
+    }
+</style>
+
+<h1 style="margin-top: 20px">Create New Country</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <table class="form-table">
+                <tbody>
+                    <tr>
+                        <td class="label-cell"><label asp-for="Name"></label></td>
+                        <td class="input-cell">
+                            <input asp-for="Name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"><label asp-for="Code1">Code 1</label></td>
+                        <td class="input-cell">
+                            <input asp-for="Code1" maxlength="2" />
+                            <span asp-validation-for="Code1" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"><label asp-for="Code2">Code 2</label></td>
+                        <td class="input-cell">
+                            <input asp-for="Code2" maxlength="3" />
+                            <span asp-validation-for="Code2" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"><label asp-for="Capital"></label></td>
+                        <td class="input-cell">
+                            <input asp-for="Capital" />
+                            <span asp-validation-for="Capital" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"><label asp-for="Region"></label></td>
+                        <td class="input-cell">
+                            <input asp-for="Region" />
+                            <span asp-validation-for="Region" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"><label asp-for="Flag">Flag Image URL</label></td>
+                        <td class="input-cell">
+                            <input asp-for="Flag" />
+                            <span asp-validation-for="Flag" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"></td>
+                        <td class="input-cell">
+                            <input type="submit" value="Create" class="btn btn-primary interactive-btn" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+
+<div style="margin-top: 20px;">
+    <a asp-action="Index" class="btn btn-info interactive-btn">&lt; Back to Countries</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,107 @@
+﻿@model IEnumerable<RecordStore.Domain.DomainModels.RecordLabel>
+
+@{
+    ViewData["Title"] = "Record Labels";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .interactive-btn {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .interactive-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.4rem 0.8rem rgba(0,0,0,.15);
+    }
+</style>
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Manage Record Labels</h1>
+        <a asp-action="Create" class="btn btn-primary interactive-btn">Add Label</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center p-5 border rounded bg-light">
+            <p class="lead">No record labels found.</p>
+            <p>Click the "Create New" button to add the first one.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@item.Name</h5>
+                            <p class="card-text text-muted">
+                                <i class="fas fa-map-marker-alt me-2"></i>@item.City, @item.Country.Name
+                            </p>
+
+                            <div class="mt-auto d-flex justify-content-end">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning me-2 interactive-btn">Edit</a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info me-2 interactive-btn">Details</a>
+                                <button type="button" class="btn btn-sm btn-danger interactive-btn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteLabelModal"
+                                        data-label-id="@item.Id"
+                                        data-label-name="@item.Name">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="deleteLabelModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the record label: <br /> <strong id="labelNameToDelete" class="fs-5"></strong>?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary interactive-btn" data-bs-dismiss="modal">Cancel</button>
+
+                <form asp-action="Delete" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="labelIdToDelete" />
+                    <button type="submit" class="btn btn-danger interactive-btn">Confirm & Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            var deleteLabelModal = document.getElementById('deleteLabelModal');
+
+            deleteLabelModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+
+                var labelId = button.getAttribute('data-label-id');
+                var labelName = button.getAttribute('data-label-name');
+
+                var modalBodyName = deleteLabelModal.querySelector('#labelNameToDelete');
+                var hiddenInputId = deleteLabelModal.querySelector('#labelIdToDelete');
+
+                modalBodyName.textContent = labelName;
+                hiddenInputId.value = labelId;
+            });
+        });
+    </script>
+}

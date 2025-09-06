@@ -1,0 +1,20 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('serviceConnectorResourceGroupName')]/providers/Microsoft.Web/sites/RecordStoreWeb20250803203635/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsDefaultConnection_7707B846A8",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/record-store-server-2025/databases/RecordStore.Web_db",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:DefaultConnection",
+      "dynamicId": null
+    },
+    "mssql2": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('serviceConnectorResourceGroupName')]/providers/Microsoft.Web/sites/RecordStoreWeb20250803203635/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsApplicationDbContextCon_8CCCEE6B0F",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/record-store-server-2025/databases/RecordStore.Web_db",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:ApplicationDbContextConnection1",
+      "dynamicId": null
+    }
+  }
+}

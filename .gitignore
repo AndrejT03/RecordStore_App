@@ -1,0 +1,43 @@
+# Mac
+.DS_Store
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+artifacts/
+
+# Visual Studio
+.vs/
+*.sln.ide/
+
+# Rider
+.idea/
+
+# Dotnet
+project.lock.json
+project.fragment.lock.json
+
+# Tooling
+/tools/
+
+# Environment
+.env
+
+# Secrets
+secrets.json
+appsettings.Development.json

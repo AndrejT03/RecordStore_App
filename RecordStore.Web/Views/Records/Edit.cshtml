@@ -1,0 +1,184 @@
+﻿@model RecordStore.Domain.DomainModels.Record
+
+@{
+    ViewData["Title"] = "Edit Record";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .interactive-btn {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .interactive-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.4rem 0.8rem rgba(0,0,0,.15);
+    }
+
+    .form-table {
+        width: 100%;
+        max-width: 800px; 
+        border-collapse: separate;
+        border-spacing: 0 12px;
+    }
+
+    .form-table td {
+        vertical-align: middle;
+    }
+
+    .form-table .label-cell {
+        text-align: right;
+        padding-right: 15px;
+        width: 150px;
+        font-weight: bold;
+        color: #555;
+    }
+
+    .form-table .input-cell input,
+    .form-table .input-cell select {
+        width: 100%;
+        max-width: 350px;
+        border: 1px solid #ccc;
+        padding: 6px;
+        font-size: 14px;
+        border-radius: 3px;
+    }
+
+    .form-table .validation-cell {
+    padding-left: 10px;
+    vertical-align: middle;
+    }
+
+    .text-danger {
+        font-size: 0.9em;
+        white-space: nowrap; 
+    }
+
+    .form-table .btn {
+        margin-top: 10px;
+    }
+</style>
+
+<h1 style="margin-top: 20px">Edit Record: @Model.Title</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <table class="form-table">
+                <tbody>
+                    <tr>
+                        <td class="label-cell"><label asp-for="Title"></label></td>
+                        <td class="input-cell">
+                            <input asp-for="Title" />
+                        </td>
+                        <td class="validation-cell">
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"><label asp-for="ArtistId"></label></td>
+                        <td class="input-cell">
+                            <select asp-for="ArtistId" asp-items="ViewBag.ArtistId"></select>
+                        </td>
+                        <td class="validation-cell">
+                            <span asp-validation-for="ArtistId" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"><label asp-for="ReleaseYear"></label></td>
+                        <td class="input-cell">
+                            <input asp-for="ReleaseYear" />
+                        </td>
+                        <td class="validation-cell">
+                            <span asp-validation-for="ReleaseYear" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"><label asp-for="Format"></label></td>
+                        <td class="input-cell">
+                            <select asp-for="Format" asp-items="Html.GetEnumSelectList<RecordStore.Domain.DomainModels.RecordFormat>()"></select>
+                        </td>
+                        <td class="validation-cell">
+                            <span asp-validation-for="Format" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"><label asp-for="Genre"></label></td>
+                        <td class="input-cell">
+                            <select asp-for="Genre" asp-items="Html.GetEnumSelectList<RecordStore.Domain.DomainModels.Genre>()"></select>
+                        </td>
+                        <td class="validation-cell">
+                            <span asp-validation-for="Genre" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"><label asp-for="RecordLabelId"></label></td>
+                        <td class="input-cell">
+                            <select asp-for="RecordLabelId" asp-items="ViewBag.RecordLabelId">
+                                <option value="">Select a Record Label</option>
+                            </select>
+                        </td>
+                        <td class="validation-cell">
+                            <span asp-validation-for="RecordLabelId" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"><label asp-for="IsReissue">Reissue?</label></td>
+                        <td class="input-cell" style="text-align: left;">
+                            <input type="checkbox" asp-for="IsReissue" style="width: auto; vertical-align: middle;" />
+                        </td>
+                        <td class="validation-cell">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"><label asp-for="CoverURL"></label></td>
+                        <td class="input-cell">
+                            <input asp-for="CoverURL" />
+                        </td>
+                        <td class="validation-cell">
+                            <span asp-validation-for="CoverURL" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"><label asp-for="Price"></label></td>
+                        <td class="input-cell">
+                            <input asp-for="Price" />
+                        </td>
+                        <td class="validation-cell">
+                            <span asp-validation-for="Price" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"><label asp-for="StockQuantity"></label></td>
+                        <td class="input-cell">
+                            <input asp-for="StockQuantity" />
+                        </td>
+                        <td class="validation-cell">
+                            <span asp-validation-for="StockQuantity" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell"></td>
+                        <td class="input-cell" colspan="2">
+                            <input type="submit" value="Save" class="btn btn-primary interactive-btn" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+
+<div style="margin-top: 20px;">
+    <a asp-action="Index" class="btn btn-info interactive-btn">&lt; Back to Records</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,135 @@
+﻿@model RecordStore.Domain.DTO.Analytics.AnalyticsViewModel
+@using System.Text.Json;
+
+@{
+    ViewData["Title"] = "Sales Analytics";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .interactive-btn {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .interactive-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.4rem 0.8rem rgba(0,0,0,.15);
+    }
+</style>
+
+<div class="container my-5">
+    <h1 class="mb-4">Sales Analytics & Reports</h1>
+
+    <div class="card shadow-sm mb-5">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Sales Over Last 30 Days</h5>
+        </div>
+        <div class="card-body">
+            <canvas id="salesChart"></canvas>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-fire me-2"></i>Top 10 Best-Selling Records</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>Artist</th>
+                                <th class="text-center">Units Sold</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.BestSellingRecords.Count; i++)
+                            {
+                                var record = Model.BestSellingRecords[i];
+                                <tr>
+                                    <td>@(i + 1)</td>
+                                    <td><a asp-controller="Records" asp-action="Details" asp-route-id="@record.RecordId">@record.Title</a></td>
+                                    <td>@record.ArtistName</td>
+                                    <td class="text-center">@record.UnitsSold</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-music me-2"></i>Revenue by Genre</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Genre</th>
+                                <th class="text-end">Total Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var genre in Model.GenrePerformance)
+                            {
+                                <tr>
+                                    <td>@genre.Genre</td>
+                                    <td class="text-end">@String.Format("{0:C}", genre.TotalRevenue)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4">
+        <a asp-action="Dashboard" class="btn btn-info interactive-btn">&lt; Back to Dashboard</a>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+
+            const salesLabels = @Json.Serialize(Model.SalesChartLabels);
+            const salesData = @Json.Serialize(Model.SalesChartData);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: salesLabels,
+                    datasets: [{
+                        label: 'Total Revenue',
+                        data: salesData,
+                        fill: true,
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value, index, values) {
+                                    return '$' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}

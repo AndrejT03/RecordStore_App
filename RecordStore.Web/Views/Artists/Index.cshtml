@@ -1,0 +1,87 @@
+﻿@using RecordStore.Domain.DomainModels
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+@model IPagedList<Artist>
+
+@{
+    ViewData["Title"] = "Artists";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .interactive-btn {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .interactive-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.4rem 0.8rem rgba(0,0,0,.15);
+    }
+</style>
+
+<h1 style="margin-top: 20px">Featured Artists</h1>
+
+<div class="row mb-4 align-items-end">
+    <div class="col-md-3">
+        @if (User.IsInRole("Administrator"))
+        {
+            <a asp-action="Create" class="btn btn-primary interactive-btn">Add Artist</a>
+        }
+    </div>
+    <div class="col-md-5">
+        @using (Html.BeginForm("Index", "Artists", FormMethod.Get))
+        {
+            <div class="input-group">
+                @Html.TextBox("searchString", ViewBag.CurrentFilter as string, new { @class = "form-control", placeholder = "Search by Name or Country..." })
+                <div class="input-group-append">
+                    <input type="submit" value="Search" class="btn btn-outline-secondary" />
+                </div>
+            </div>
+        }
+    </div>
+    <div class="col-md-4">
+        @using (Html.BeginForm("Index", "Artists", FormMethod.Get, new { id = "sortForm" }))
+        {
+            <label for="sortOrder" class="form-label">Sort by:</label>
+            @Html.DropDownList("sortOrder", new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Name (A-Z)", Value = "" },
+                new SelectListItem { Text = "Name (Z-A)", Value = "name_desc" },
+                new SelectListItem { Text = "Country (A-Z)", Value = "country" },
+                new SelectListItem { Text = "Country (Z-A)", Value = "country_desc" }
+                }, new { @class = "form-control", onchange = "document.getElementById('sortForm').submit();" })
+                }
+    </div>
+</div>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 col-lg-3 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="@item.Picture" class="card-img-top" alt="Photo of @item.Name" style="height: 200px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-center">@item.Name</h5>
+                </div>
+
+                <div class="card-footer bg-transparent border-top-0 d-flex justify-content-center">
+                    <div class="btn-group" role="group">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info interactive-btn">Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="d-flex justify-content-center">
+    @Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }),
+        new PagedListRenderOptions
+        {
+            ContainerDivClasses = new[] { "pagination-container" },
+            LiElementClasses = new List<string> { "page-item" },
+            PageClasses = new List<string> { "page-link", "interactive-btn" }
+        })
+</div>
